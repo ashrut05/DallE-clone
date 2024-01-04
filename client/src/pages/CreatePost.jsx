@@ -13,13 +13,13 @@ const [form, setForm] = useState({
 });
 
 const [generatingImg, setGeneratingImg] = useState(false);
-const [loading, setLoading] = useState(false);
+const [isLoading, setLoading] = useState(false);
 
 const generateImage = async() => {
   if(form.prompt) {
     try {
       setGeneratingImg(true);
-      const response = await fetch('http://localhost:8080/api/v1/dalle',{
+      const response = await fetch('https://dall-e-498e.onrender.com/api/v1/dalle',{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -29,16 +29,15 @@ const generateImage = async() => {
 
       const data = await response.json();
       setForm({ ...form, photo: `data:image/jpeg;base64,${data.photo}`})
-    } catch (error) {
-      alert(error);
+    } catch (err) {
+      alert(err);
     } finally {
       setGeneratingImg(false);
     }
   } else {
     alert('Please enter a prompt')
   }
-
-}
+};
 
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -47,18 +46,18 @@ const generateImage = async() => {
         setLoading(true);
 
         try {
-          const response = await fetch('http://localhost:8080/api/v1/post', {
+          const response = await fetch('https://dall-e-498e.onrender.com/api/v1/post', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify(form)
-          })
+          });
 
           await response.json();
           navigate('/');
-        } catch (err) {
-          alert(err)
+        } catch (error) {
+          alert(error)
         } finally {
           setLoading(false);
         }
@@ -68,13 +67,13 @@ const generateImage = async() => {
     }
 
     const handleChange = (e) => {
-      setForm({ ...form, [e.target.name]: e.target.value})
-    }
+      setForm({ ...form, [e.target.name]: e.target.value});
+    };
 
     const handleSurpriseMe = () => {
       const randomPrompt = getRandomPrompt(form.prompt);
-      setForm({...form, prompt: randomPrompt })
-    }
+      setForm({...form, prompt: randomPrompt });
+    };
   
   return (
     <section className="max-w-7xl mx-auto">
@@ -112,7 +111,7 @@ const generateImage = async() => {
                   alt={form.prompt}
                   className="w-full h-full object-contain"
                 />
-              ): (
+              ) : (
                 <img
                   src={preview}
                   alt="preview"
@@ -142,12 +141,12 @@ const generateImage = async() => {
             type="submit"
             className="mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center"
           >
-            {loading ? 'Sharing...' : 'Share'}
+            {isLoading ? 'Sharing...' : 'Share'}
           </button> 
         </div>
       </form>
     </section>
-  )
-}
+  );
+};
 
-export default CreatePost
+export default CreatePost;
